@@ -6,3 +6,10 @@ examples/examples-api/map-outputs
 examples/examples-api/**/__pycache__/
 examples/examples-api/**/*.py[cod]
 gmaps-output
+python/.venv/
+python/output/
+python/**/__pycache__/
+python/**/*.py[cod]
+python/.pytest_cache/
+python/.env
+python/*.egg-info/

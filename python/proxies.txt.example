@@ -1,0 +1,3 @@
+# One proxy per line. HTTP and SOCKS5 are accepted.
+# http://user:password@host:port
+# socks5://host:1080

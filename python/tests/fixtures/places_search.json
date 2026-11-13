@@ -1,0 +1,62 @@
+{
+  "places": [
+    {
+      "id": "ChIJbluebottleexample",
+      "displayName": {"text": "Blue Bottle Coffee", "languageCode": "en"},
+      "formattedAddress": "76 N 4th St, Brooklyn, NY 11249, USA",
+      "internationalPhoneNumber": "+1 212-343-9000",
+      "nationalPhoneNumber": "(212) 343-9000",
+      "websiteUri": "https://bluebottlecoffee.com/cafes",
+      "rating": 4.6,
+      "userRatingCount": 842,
+      "location": {"latitude": 40.71821, "longitude": -73.96312},
+      "types": ["coffee_shop", "cafe", "point_of_interest", "establishment"],
+      "priceLevel": "PRICE_LEVEL_MODERATE",
+      "businessStatus": "OPERATIONAL",
+      "googleMapsUri": "https://maps.google.com/?cid=123",
+      "currentOpeningHours": {
+        "openNow": true,
+        "weekdayDescriptions": ["Monday: 7:00 AM – 7:00 PM", "Tuesday: 7:00 AM – 7:00 PM"],
+        "periods": [
+          {
+            "open": {"day": 1, "hour": 7, "minute": 0},
+            "close": {"day": 1, "hour": 19, "minute": 0}
+          }
+        ]
+      },
+      "reviews": [
+        {
+          "rating": 5,
+          "publishTime": "2026-10-20T15:00:00Z",
+          "relativePublishTimeDescription": "3 weeks ago",
+          "text": {"text": "Excellent espresso.", "languageCode": "en"},
+          "authorAttribution": {"displayName": "Sam Lee"}
+        },
+        {
+          "rating": 4,
+          "publishTime": "2026-09-01T15:00:00Z",
+          "text": {"text": "Busy on Saturdays.", "languageCode": "en"},
+          "authorAttribution": {"displayName": "Ada"}
+        }
+      ]
+    },
+    {
+      "id": "ChIJsocialonly",
+      "displayName": {"text": "Social Cafe"},
+      "formattedAddress": "1 Broadway, New York, NY",
+      "websiteUri": "https://www.facebook.com/socialcafe",
+      "rating": 3.2,
+      "userRatingCount": 10,
+      "location": {"latitude": 40.71, "longitude": -74.01},
+      "types": ["cafe"],
+      "reviews": [
+        {
+          "rating": 3,
+          "publishTime": "2026-08-01T12:00:00Z",
+          "text": {"text": "Fine.", "languageCode": "en"},
+          "authorAttribution": {"displayName": "Pat"}
+        }
+      ]
+    }
+  ]
+}

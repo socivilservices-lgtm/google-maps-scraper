@@ -1,0 +1,19 @@
+{
+  "id": "ChIJneedsdetails",
+  "displayName": {"text": "Detail Coffee"},
+  "formattedAddress": "10 Pine St, New York, NY",
+  "internationalPhoneNumber": "+1 212-343-9000",
+  "websiteUri": "https://detailcoffee.example",
+  "rating": 4.9,
+  "userRatingCount": 20,
+  "location": {"latitude": 40.7, "longitude": -74.0},
+  "types": ["coffee_shop"],
+  "reviews": [
+    {
+      "rating": 5,
+      "publishTime": "2026-11-01T12:00:00Z",
+      "text": {"text": "Worth the walk.", "languageCode": "en"},
+      "authorAttribution": {"displayName": "Riley"}
+    }
+  ]
+}

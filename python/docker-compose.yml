@@ -1,0 +1,30 @@
+services:
+  maps-bot:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      GMAPS_SERVICE_API_KEY: ${GMAPS_SERVICE_API_KEY:-}
+      GOOGLE_PLACES_API_KEY: ${GOOGLE_PLACES_API_KEY:-}
+      GMAPS_BACKEND: ${GMAPS_BACKEND:-auto}
+      GMAPS_HEADLESS: "true"
+      GMAPS_CHROMIUM_NO_SANDBOX: "true"
+      GMAPS_OUTPUT_DIR: /data
+      GMAPS_USER_DATA_DIR: /data/profile
+      GMAPS_MAX_RESULTS: ${GMAPS_MAX_RESULTS:-20}
+      GMAPS_DELAY_MIN: ${GMAPS_DELAY_MIN:-2}
+      GMAPS_DELAY_MAX: ${GMAPS_DELAY_MAX:-5}
+      GMAPS_PROXIES_FILE: ${GMAPS_PROXIES_FILE:-}
+    volumes:
+      - maps-data:/data
+    shm_size: "1gb"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+volumes:
+  maps-data:
