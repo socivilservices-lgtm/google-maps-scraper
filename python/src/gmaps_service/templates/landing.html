@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Maps leads{% endblock %}
+{% block body %}
+<section class="hero">
+  <p class="eyebrow">Business leads from Google Maps</p>
+  <h1>Find local businesses, then download the list.</h1>
+  <p class="lede">Search by what they do and where they are. You get the name, address, phone, website, rating, hours, and public emails from the business's own site.</p>
+  <p><a class="button" href="/signup">Start with an invite</a> <a href="#pricing">See pricing</a></p>
+</section>
+<section id="pricing" class="panel">
+  <h2>{{ plan_name }} · ${{ plan_price }}/month</h2>
+  <ul>
+    <li>{{ plan_results }} business results per month</li>
+    <li>{{ plan_searches }} searches per month, up to {{ plan_per_search }} results each</li>
+    <li>JSON and CSV download, API key, and email extraction</li>
+    <li>14-day trial when you sign up with an admin invite</li>
+  </ul>
+  <p>The account in <code>ADMIN_EMAIL</code> is free and unlimited. After a trial, searching requires this subscription.</p>
+  {% if not billing_enabled %}
+  <p class="note">{{ billing_message }}</p>
+  {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Maps leads{% endblock %}</title>
+  <link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="/">Maps leads</a>
+    <nav>
+      {% if user %}
+        <a href="/dashboard">Dashboard</a>
+        <a href="/account">Account</a>
+        {% if user.role == "admin" %}<a href="/admin">Admin</a>{% endif %}
+        <form method="post" action="/logout" class="inline">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+          <button type="submit" class="link">Log out</button>
+        </form>
+      {% else %}
+        <a href="/login">Log in</a>
+        <a href="/signup" class="button">Sign up</a>
+      {% endif %}
+    </nav>
+  </header>
+  <main>
+    {% block body %}{% endblock %}
+  </main>
+</body>
+</html>

@@ -1,0 +1,70 @@
+# DigitalOcean App Platform spec for the Python service.
+# Create the app from this file after the branch is on main, then fill the SECRET values
+# in the dashboard or with doctl. The Go Dockerfile at the repository root is not this service.
+name: maps-leads
+region: nyc
+
+services:
+  - name: web
+    github:
+      repo: socivilservices-lgtm/google-maps-scraper
+      branch: main
+      deploy_on_push: true
+    # Build context is the Python package, not the Go module at the repo root.
+    source_dir: python
+    dockerfile_path: Dockerfile
+    http_port: 8000
+    instance_count: 1
+    # 1 vCPU / 2 GB class. Bump this if Chromium is the backend and the process is killed.
+    instance_size_slug: professional-s
+    health_check:
+      http_path: /health
+    envs:
+      - key: DATABASE_URL
+        scope: RUN_TIME
+        type: SECRET
+      - key: SECRET_KEY
+        scope: RUN_TIME
+        type: SECRET
+      - key: ADMIN_EMAIL
+        scope: RUN_TIME
+        type: SECRET
+      - key: APP_BASE_URL
+        scope: RUN_TIME
+        type: SECRET
+      - key: STRIPE_SECRET_KEY
+        scope: RUN_TIME
+        type: SECRET
+      - key: STRIPE_WEBHOOK_SECRET
+        scope: RUN_TIME
+        type: SECRET
+      - key: STRIPE_PRICE_ID
+        scope: RUN_TIME
+        type: SECRET
+      - key: GOOGLE_PLACES_API_KEY
+        scope: RUN_TIME
+        type: SECRET
+      - key: GMAPS_SERVICE_API_KEY
+        scope: RUN_TIME
+        type: SECRET
+      - key: GMAPS_BACKEND
+        scope: RUN_TIME
+        value: auto
+      - key: GMAPS_HEADLESS
+        scope: RUN_TIME
+        value: "true"
+      - key: GMAPS_CHROMIUM_NO_SANDBOX
+        scope: RUN_TIME
+        value: "true"
+      - key: GMAPS_COOKIE_SECURE
+        scope: RUN_TIME
+        value: "true"
+      - key: GMAPS_TRUST_PROXY
+        scope: RUN_TIME
+        value: "true"
+      - key: GMAPS_OUTPUT_DIR
+        scope: RUN_TIME
+        value: /data
+      - key: GMAPS_USER_DATA_DIR
+        scope: RUN_TIME
+        value: /data/profile

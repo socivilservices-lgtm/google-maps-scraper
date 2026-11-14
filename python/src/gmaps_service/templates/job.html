@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Job{% endblock %}
+{% block body %}
+<section class="panel">
+  <h1>{{ job.query }}</h1>
+  <p>Status: {{ job.status }}</p>
+  {% if job.error %}<p class="error">{{ job.error }}</p>{% endif %}
+  {% if job.status == "completed" %}
+  <p>
+    <a href="/jobs/{{ job.job_id }}/download?format=json">Download JSON</a>
+    <a href="/jobs/{{ job.job_id }}/download?format=csv">Download CSV</a>
+  </p>
+  {% endif %}
+  <p><a href="/dashboard">Back to dashboard</a></p>
+</section>
+{% endblock %}

@@ -40,6 +40,7 @@ Requires Docker and Node.js on macOS, Linux, or Windows through WSL. See [how th
 | Ask an AI coding agent to run a scrape | [AI Agent Skill](#ai-agent-skill) |
 | Run a browser UI locally | [Web UI](#web-ui) |
 | Automate scraping from your app | [REST API](#rest-api) |
+| Run the Python bot (Places API or Playwright, HTTP API) | [Python service](python/README.md) |
 | Run a multi-user scraping platform | [SaaS Edition](docs/saas.md) |
 | Follow common workflows | [Recipes](docs/recipes.md) |
 

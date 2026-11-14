@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Admin{% endblock %}
+{% block body %}
+<section class="panel">
+  <h1>Invites</h1>
+  {% if error %}<p class="error">{{ error }}</p>{% endif %}
+  <form method="post" action="/admin/invites" class="inline">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <label>Uses <input type="number" name="max_uses" min="1" max="100" value="1"></label>
+    <button type="submit">Create invite</button>
+  </form>
+  <p>Share <code>/signup?invite=CODE</code>. Signup through a live invite starts a 14-day trial.</p>
+  <table>
+    <thead><tr><th>Code</th><th>Uses</th><th>Expires</th></tr></thead>
+    <tbody>
+      {% for invite in invites %}
+      <tr>
+        <td><code>{{ invite.code }}</code></td>
+        <td>{{ invite.uses }} / {{ invite.max_uses }}</td>
+        <td>{{ invite.expires_at or "none" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+<section class="panel">
+  <h2>Users</h2>
+  <table>
+    <thead><tr><th>Email</th><th>Role</th><th>Plan</th><th>Subscription</th><th>Trial ends</th></tr></thead>
+    <tbody>
+      {% for row in users %}
+      <tr>
+        <td>{{ row.email }}</td>
+        <td>{{ row.role }}</td>
+        <td>{{ row.plan }}</td>
+        <td>{{ row.subscription_status }}</td>
+        <td>{{ row.trial_ends_at or "" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}
