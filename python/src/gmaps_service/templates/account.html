@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Account{% endblock %}
+{% block body %}
+<section class="panel">
+  <h1>{{ user.email }}</h1>
+  {% if notice %}<p class="note">{{ notice }}</p>{% endif %}
+  {% if error %}<p class="error">{{ error }}</p>{% endif %}
+  {% if fresh_key %}
+  <p class="note">Copy this API key now. It is stored only as a hash. <code>{{ fresh_key }}</code></p>
+  {% endif %}
+  <p>Plan: {{ access.plan }}. {{ access.reason }}</p>
+  {% if user.trial_ends_at %}<p>Trial ends {{ user.trial_ends_at }}</p>{% endif %}
+  {% if not access.unlimited %}
+  <p>Usage this month: {{ usage.results_used }} / {{ plan_results }} results, {{ usage.searches_used }} / {{ plan_searches }} searches.</p>
+  {% endif %}
+</section>
+<section class="panel">
+  <h2>Billing</h2>
+  <p>{{ billing_message }}</p>
+  {% if billing_enabled %}
+  <form method="post" action="/account/checkout" class="inline">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <button type="submit">Subscribe · ${{ plan_price }}/month</button>
+  </form>
+  <form method="post" action="/account/portal" class="inline">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <button type="submit">Manage billing</button>
+  </form>
+  {% endif %}
+</section>
+<section class="panel">
+  <h2>API keys</h2>
+  <form method="post" action="/account/api-keys">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <label>Name <input name="name" value="default" maxlength="80"></label>
+    <button type="submit">Create key</button>
+  </form>
+  <ul>
+    {% for key in keys %}
+    <li>
+      {{ key.name }} · {{ key.prefix }}… · {% if key.revoked_at %}revoked{% else %}active{% endif %}
+      {% if not key.revoked_at %}
+      <form method="post" action="/account/api-keys/{{ key.id }}/revoke" class="inline">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <button type="submit">Revoke</button>
+      </form>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  <p>Send the key as <code>X-API-Key</code> on <code>POST /search</code>.</p>
+</section>
+{% endblock %}

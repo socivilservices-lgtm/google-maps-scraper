@@ -1,11 +1,11 @@
 """HTTP API tests. The runner is fake, so no browser or Places key is required."""
 
+from fastapi.testclient import TestClient
+
 from gmaps_service.api import create_app
 from gmaps_service.config import Config
 from gmaps_service.errors import CaptchaDetectedError
 from gmaps_service.models import Business, ScrapeResult
-
-from fastapi.testclient import TestClient
 
 
 def _config(tmp_path, api_key="test-key"):
@@ -77,13 +77,17 @@ def test_background_job_and_captcha_failure(tmp_path):
     async def fail(**kwargs):
         raise CaptchaDetectedError("Google showed a CAPTCHA or unusual-traffic page")
 
-    app = create_app(_config(tmp_path, api_key=""), runner=fail)
+    app = create_app(_config(tmp_path, api_key="test-key"), runner=fail)
     client = TestClient(app)
-    created = client.post("/search", json={"query": "coffee shops", "location": "New York", "wait": False})
+    created = client.post(
+        "/search",
+        headers={"X-API-Key": "test-key"},
+        json={"query": "coffee shops", "location": "New York", "wait": False},
+    )
     assert created.status_code == 200
     job_id = created.json()["job_id"]
     # TestClient runs the background task before returning control.
-    status = client.get(f"/jobs/{job_id}")
+    status = client.get(f"/jobs/{job_id}", headers={"X-API-Key": "test-key"})
     assert status.status_code == 200
     assert status.json()["status"] == "failed"
     assert status.json()["error_type"] == "captcha"

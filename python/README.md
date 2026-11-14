@@ -125,7 +125,70 @@ pytest
 
 Parser tests use `testdata/raw.json`, `gmaps/testdata/review_*.json`, and the fixtures in `python/tests/fixtures/`. They do not open a browser or call Google.
 
+## Accounts, trials, and billing
+
+The HTTP service is a small multi-user app. The CLI still runs a search on the machine without an account.
+
+- Sign up and log in with email and a password. Passwords are stored as bcrypt hashes. The browser session is an HttpOnly cookie. Each user can create API keys; only the hash is kept.
+- `ADMIN_EMAIL` is the owner. That account is free and is not subject to the monthly quota.
+- An admin invite (`/admin`, or `/signup?invite=CODE`) starts a 14-day trial with the same search quota as the paid plan. After the trial, or with no invite, searching requires an active Stripe subscription.
+- The paid plan is **$29/month**, **3,000 results**, **100 searches**, **100 results per search**. The comparison and the cost math are in [docs/PRICING.md](../docs/PRICING.md).
+- Without `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, and `STRIPE_PRICE_ID`, Checkout and the webhook stay off and the account page says billing is not configured. Admin access and unexpired invite trials still work.
+- Postgres comes from `DATABASE_URL` (a Supabase connection string is fine). If that variable is empty, the service uses SQLite at `$GMAPS_OUTPUT_DIR/app.db`. Migrations run on startup from `src/gmaps_service/migrations/`.
+
+Pages: `/` (pricing), `/signup`, `/login`, `/dashboard`, `/app/jobs/{id}`, `/account`, `/admin`.
+
+`POST /search` and `GET /jobs/{id}` accept `X-API-Key` (a user key or the optional operator key). They no longer run anonymously when the operator key is unset.
+
 ## Deploy
+
+### DigitalOcean App Platform
+
+1. Merge this service to `main`.
+2. Create a Postgres database (Supabase is fine) and copy its URI.
+3. In Stripe, create a $29/month recurring price and a webhook to `https://YOUR_HOST/billing/webhook` for `checkout.session.completed`, `customer.subscription.updated`, and `customer.subscription.deleted`.
+4. From the repo root, create the app (or paste `.do/app.yaml` into the App Platform UI):
+
+```bash
+doctl apps create --spec .do/app.yaml
+```
+
+5. Set the SECRET values in the App Platform dashboard. The spec already points at `python/Dockerfile` on `main` with source directory `python`.
+6. Open the app URL, sign up with the same address as `ADMIN_EMAIL`, then create an invite from `/admin`.
+
+The instance size in the spec is `professional-s`. Increase it if Chromium is the backend and the process is killed. Job files live on the container disk at `/data` and are lost when the container is replaced; accounts live in Postgres. Mount a volume at `/data` if downloads must survive a restart.
+
+### Compose on a VM
+
+```bash
+docker compose -f python/docker-compose.yml up --build
+```
+
+From the repository root the same stack is `docker compose -f docker-compose.python.yml up --build`.
+
+## Environment variables the owner must set
+
+| Variable | Required | Purpose |
+| --- | --- | --- |
+| `DATABASE_URL` | Production | Postgres URI. Empty uses SQLite under the output dir. |
+| `SECRET_KEY` | Production | Signs session cookies. |
+| `ADMIN_EMAIL` | Yes, for the owner account | That email is the unlimited admin. |
+| `APP_BASE_URL` | Production | Public `https://` origin for Stripe return URLs. |
+| `STRIPE_SECRET_KEY` | To charge | Stripe secret key. Omit to disable billing. |
+| `STRIPE_WEBHOOK_SECRET` | To charge | Webhook signing secret. |
+| `STRIPE_PRICE_ID` | To charge | The $29/month price id. |
+| `GOOGLE_PLACES_API_KEY` | Only for the Places backend | Official Places API (New). |
+| `GMAPS_SERVICE_API_KEY` | No | Optional operator key that can read every job. |
+| `GMAPS_COOKIE_SECURE` | Production | `true` so the session cookie is HTTPS-only. |
+| `GMAPS_TRUST_PROXY` | Behind App Platform | `true` so login limits use `X-Forwarded-For`. |
+| `GMAPS_HEADLESS` | Containers | `true` |
+| `GMAPS_CHROMIUM_NO_SANDBOX` | Containers running as root | `true` |
+| `GMAPS_BACKEND` | No | `auto`, `playwright`, or `places`. |
+| `GMAPS_OUTPUT_DIR` | No | Default `output`. Use `/data` in the container. |
+
+Accounts to create: a Postgres database, a Stripe account (when you want to charge), a DigitalOcean app (or another host), and optionally a Google Cloud project for the Places API. The security review is in [docs/SECURITY_SCAN.md](../docs/SECURITY_SCAN.md).
+
+## Deploy (container image)
 
 Build from this directory so the Go scraper's Dockerfile is left unchanged:
 
@@ -137,7 +200,7 @@ From the repository root the same stack is `docker compose -f docker-compose.pyt
 
 The image is `mcr.microsoft.com/playwright/python` (override with `--build-arg PLAYWRIGHT_IMAGE=...`). Chromium is installed again during the build so it matches the Playwright package. Give the container about 1 GB of `/dev/shm` (`shm_size` in Compose). Job files and the browser profile are stored on the `maps-data` volume at `/data`.
 
-Set `GMAPS_SERVICE_API_KEY` before publishing the port. Put `GOOGLE_PLACES_API_KEY` in the environment when you want the official API. The health check path is `/health`.
+Set `SECRET_KEY` and `ADMIN_EMAIL` before publishing the port. Put `GOOGLE_PLACES_API_KEY` in the environment when you want the official API. The health check path is `/health`.
 
 **Render / Railway / Fly.io.** Point the service at `python/Dockerfile` with build context `python/`. These hosts are a good fit for `GMAPS_BACKEND=places`. The Playwright backend needs more RAM (2 GB is a practical floor) and still stops cleanly when Google shows a CAPTCHA, which is common from datacenter addresses. Mount a disk at `/data` if job downloads should survive a restart.
 

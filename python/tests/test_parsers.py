@@ -3,6 +3,8 @@
 import json
 from pathlib import Path
 
+from paths import FIXTURES, RAW_PLACE, REVIEW_DIR
+
 from gmaps_service.parsers import (
     business_from_place_payload,
     business_from_places,
@@ -12,8 +14,6 @@ from gmaps_service.parsers import (
     parse_reviews_html,
     parse_search_results,
 )
-
-from paths import FIXTURES, RAW_PLACE, REVIEW_DIR
 
 
 def test_place_payload_matches_kipriakon_fixture():

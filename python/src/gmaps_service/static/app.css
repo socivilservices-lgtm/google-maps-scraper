@@ -1,0 +1,48 @@
+:root {
+  color: #1c1917;
+  background: #f6f3ee;
+  font-family: "Iowan Old Style", "Palatino Linotype", Palatino, serif;
+}
+body { margin: 0; }
+a { color: #9a3412; }
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background: #1c1917;
+  color: #f6f3ee;
+}
+.top a, .top .link { color: #f6f3ee; }
+.brand { font-weight: 700; text-decoration: none; }
+nav { display: flex; gap: 1rem; align-items: center; }
+main { max-width: 46rem; margin: 0 auto; padding: 1.5rem; }
+.hero h1, .panel h1 { font-size: 2rem; line-height: 1.15; }
+.lede { font-size: 1.15rem; }
+.panel {
+  background: #fff;
+  border: 1px solid #e7e5e4;
+  padding: 1.25rem;
+  margin: 1rem 0;
+}
+.narrow { max-width: 28rem; }
+label { display: block; margin: 0.75rem 0; }
+input, select, button {
+  font: inherit;
+  padding: 0.4rem 0.55rem;
+}
+button, .button {
+  background: #9a3412;
+  color: #fff;
+  border: 0;
+  text-decoration: none;
+  padding: 0.45rem 0.7rem;
+  cursor: pointer;
+}
+.link { background: transparent; padding: 0; }
+.error { color: #9f1239; }
+.note { background: #fff7ed; padding: 0.6rem; }
+.inline { display: inline; }
+table { width: 100%; border-collapse: collapse; }
+td, th { text-align: left; padding: 0.35rem; border-bottom: 1px solid #e7e5e4; vertical-align: top; }
+.grid { display: grid; gap: 0.5rem; }

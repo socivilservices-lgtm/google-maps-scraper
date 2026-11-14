@@ -15,13 +15,25 @@ dependencies = [
   "pydantic>=2.9,<3",
   "python-dotenv>=1.0,<2",
   "beautifulsoup4>=4.12,<5",
+  "sqlalchemy>=2.0,<3",
+  "bcrypt>=4.1,<6",
+  "itsdangerous>=2.2,<3",
+  "jinja2>=3.1.6,<4",
+  "python-multipart>=0.0.12,<1",
+  "stripe>=11,<14",
 ]
 
 [project.optional-dependencies]
 dev = [
   "pytest>=8.3",
   "pytest-asyncio>=0.24",
+  "pip-audit>=2.7",
+  "bandit>=1.8",
+  "ruff>=0.8",
 ]
+
+[tool.setuptools.package-data]
+gmaps_service = ["templates/*.html", "static/*", "migrations/*.sql"]
 
 [project.scripts]
 gmaps-scraper = "gmaps_service.cli:main"
@@ -32,6 +44,20 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "S"]
+# E501: prose and SQL lines are easier to read unbroken.
+# S104: the server binds all interfaces inside a container on purpose.
+# S311: random is used only for polite delays, not tokens.
+ignore = ["S101", "B008", "S105", "S106", "E501", "S104", "S311"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S105", "S106"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"

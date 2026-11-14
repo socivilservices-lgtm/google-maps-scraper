@@ -94,9 +94,24 @@ class Config:
     language: str = "en"
     region_hint: str = ""
     max_reviews: int = 5
-    host: str = "0.0.0.0"
+    # Containers publish this port; binding every interface is intentional.
+    host: str = "0.0.0.0"  # nosec B104
     port: int = 8000
     chromium_no_sandbox: bool = False
+    database_url: str = ""
+    secret_key: str = ""
+    admin_email: str = ""
+    stripe_secret_key: str = ""
+    stripe_webhook_secret: str = ""
+    stripe_price_id: str = ""
+    app_base_url: str = "http://127.0.0.1:8000"
+    cookie_secure: bool = False
+    trust_proxy: bool = False
+    monthly_result_quota: int = 3000
+    monthly_search_quota: int = 100
+    max_results_per_search: int = 100
+    login_rate_limit: int = 8
+    search_rate_limit: int = 30
 
     def __post_init__(self) -> None:
         if self.backend not in _BACKENDS:
@@ -165,6 +180,20 @@ class Config:
             "host": os.environ.get("GMAPS_HOST"),
             "port": os.environ.get("GMAPS_PORT"),
             "chromium_no_sandbox": os.environ.get("GMAPS_CHROMIUM_NO_SANDBOX"),
+            "database_url": os.environ.get("DATABASE_URL"),
+            "secret_key": os.environ.get("SECRET_KEY"),
+            "admin_email": os.environ.get("ADMIN_EMAIL"),
+            "stripe_secret_key": os.environ.get("STRIPE_SECRET_KEY"),
+            "stripe_webhook_secret": os.environ.get("STRIPE_WEBHOOK_SECRET"),
+            "stripe_price_id": os.environ.get("STRIPE_PRICE_ID"),
+            "app_base_url": os.environ.get("APP_BASE_URL"),
+            "cookie_secure": os.environ.get("GMAPS_COOKIE_SECURE"),
+            "trust_proxy": os.environ.get("GMAPS_TRUST_PROXY"),
+            "monthly_result_quota": os.environ.get("GMAPS_MONTHLY_RESULT_QUOTA"),
+            "monthly_search_quota": os.environ.get("GMAPS_MONTHLY_SEARCH_QUOTA"),
+            "max_results_per_search": os.environ.get("GMAPS_MAX_RESULTS_PER_SEARCH"),
+            "login_rate_limit": os.environ.get("GMAPS_LOGIN_RATE_LIMIT"),
+            "search_rate_limit": os.environ.get("GMAPS_SEARCH_RATE_LIMIT"),
         }
         for key, value in env_map.items():
             if value not in (None, ""):
@@ -189,7 +218,7 @@ class Config:
                 proxies.extend(load_proxy_lines(file_path.read_text(encoding="utf-8")))
             else:
                 # A missing file is ignored so a container can mount one later.
-                proxies_file = proxies_file
+                pass
         return cls(
             backend=str(data.get("backend") or "auto").lower(),
             google_places_api_key=str(data.get("google_places_api_key") or ""),
@@ -210,7 +239,21 @@ class Config:
             language=str(data.get("language") or "en"),
             region_hint=str(data.get("region_hint") or ""),
             max_reviews=_as_int(data.get("max_reviews"), 5),
-            host=str(data.get("host") or "0.0.0.0"),
+            host=str(data.get("host") or "0.0.0.0"),  # nosec B104
             port=_as_int(data.get("port"), 8000),
             chromium_no_sandbox=_as_bool(data.get("chromium_no_sandbox"), False),
+            database_url=str(data.get("database_url") or ""),
+            secret_key=str(data.get("secret_key") or ""),
+            admin_email=str(data.get("admin_email") or ""),
+            stripe_secret_key=str(data.get("stripe_secret_key") or ""),
+            stripe_webhook_secret=str(data.get("stripe_webhook_secret") or ""),
+            stripe_price_id=str(data.get("stripe_price_id") or ""),
+            app_base_url=str(data.get("app_base_url") or "http://127.0.0.1:8000").rstrip("/"),
+            cookie_secure=_as_bool(data.get("cookie_secure"), False),
+            trust_proxy=_as_bool(data.get("trust_proxy"), False),
+            monthly_result_quota=_as_int(data.get("monthly_result_quota"), 3000),
+            monthly_search_quota=_as_int(data.get("monthly_search_quota"), 100),
+            max_results_per_search=_as_int(data.get("max_results_per_search"), 100),
+            login_rate_limit=_as_int(data.get("login_rate_limit"), 8),
+            search_rate_limit=_as_int(data.get("search_rate_limit"), 30),
         )

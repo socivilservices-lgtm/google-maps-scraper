@@ -4,12 +4,11 @@ import json
 
 import httpx
 import pytest
+from paths import FIXTURES
 
 from gmaps_service.config import Config
 from gmaps_service.logging_utils import EventLogger
 from gmaps_service.places_api import PlacesBackend
-
-from paths import FIXTURES
 
 
 class _Null:

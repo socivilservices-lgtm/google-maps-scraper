@@ -323,7 +323,8 @@ class PlaywrightBackend:
                 if await button.count():
                     await button.first.click(timeout=1500)
                     return
-            except Exception:
+            except Exception as exc:
+                self.logger.warning("consent button was not clickable", detail=str(exc))
                 continue
 
     async def _on_response(self, response: object) -> None:

@@ -12,7 +12,6 @@ from datetime import datetime, timezone
 from typing import TextIO
 from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 
-
 _SECRET_QUERY_KEYS = {"key", "api_key", "x-goog-api-key", "access_token"}
 
 

@@ -5,19 +5,18 @@ from contextlib import asynccontextmanager
 
 import httpx
 import pytest
+from paths import FIXTURES
 
 from gmaps_service.captcha import ensure_not_blocked, looks_like_captcha
 from gmaps_service.config import Config, playwright_proxy
 from gmaps_service.dedupe import dedupe_businesses
 from gmaps_service.emails import extract_emails_from_html, fetch_public_emails, find_contact_url
 from gmaps_service.errors import CAPTCHA_MESSAGE, CaptchaDetectedError, ConfigError
+from gmaps_service.logging_utils import EventLogger
 from gmaps_service.models import Business, Review
 from gmaps_service.normalize import normalize_phone, normalize_website
 from gmaps_service.retry import RetryableHTTPError, async_retry
-from gmaps_service.logging_utils import EventLogger
 from gmaps_service.scraper import GoogleMapsScraper
-
-from paths import FIXTURES
 
 
 def test_phone_and_website_normalization():

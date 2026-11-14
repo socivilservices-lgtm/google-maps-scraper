@@ -24,10 +24,21 @@ class JobStore:
         self.directory.mkdir(parents=True, exist_ok=True)
         self._jobs: dict[str, dict[str, object]] = {}
 
-    def create(self, *, query: str, location: str, max_results: int, backend: str) -> dict[str, object]:
-        job_id = uuid.uuid4().hex
+    def create(
+        self,
+        *,
+        query: str,
+        location: str,
+        max_results: int,
+        backend: str,
+        user_id: str | None = None,
+        job_id: str | None = None,
+    ) -> dict[str, object]:
+        job_id = job_id or uuid.uuid4().hex
+        self._validate(job_id)
         job: dict[str, object] = {
             "job_id": job_id,
+            "user_id": user_id,
             "status": "queued",
             "query": query,
             "location": location,
